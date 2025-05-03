@@ -1,13 +1,18 @@
-Proyect title: Real-Time Human Activity Recognition (?)
+Project title: Real-Time Human Activity Recognition
+
+Group Members:
+- Alejando Londoño
+- Juan Diego Lora
+- Simón García
 
 Research Questions:
 - How can a basic machine learning model classify human activities in real time using joint position data?
 - What are the best models for this real-time classification process?
 - How would different individuals and perspectives affect the estimation process?
 - What is the highest possible accuracy achievable with the selected model?
-- How can we improve generalization when taking into account speed, body type, clothing, etc. REVISEN ESTAS PREGUNTAS PORFA
+- How can we improve generalization when taking into account speed, body type, clothing, etc.
 
-Problem type: Supervised classification (With time series analysis?) DEJAMOS ESO????
+Problem type: Supervised Classification
 
 Methodology:¨Crisp-DM Adaptation
 - Business understanding: For this proyect it involves understanding the task iteself. This project is looking to make a model that allows to identify movements and some specific positions that a person is doing. This involves feeding the model a continous stream of information using a camera. The model should gain information from previous recordings on which it will learn to classify this actions based on the angle of joints and the relative distance between them.
@@ -52,8 +57,3 @@ Tools and Resources:
 - Label Studio for anotations on the recordings.
 - MediaPipe to capture and measure specific joint movements.
 - Github as the online repository for version control and collabotarion.
-
-Group Members:
-- Alejando
-- Juan
-- Simón García (SimonGarcia01)
