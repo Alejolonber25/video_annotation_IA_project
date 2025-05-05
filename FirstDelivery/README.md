@@ -22,6 +22,10 @@ Methodology:¨Crisp-DM Adaptation
 - Evaluation stategy: For this project we are planning to use accuracy, recall and F1-score to measure the performance of the model. There will be tests not only for general stream of information, but we will also check if some activities and body positions are easier to detect than others.
 - Next Steps: We must collect the data in an orderly manner, making sure to control as much the conditions in which the data is gathered (striving for homogeneity). We must train and thest the models and adjust them so the predictions are accurate. A pipeline must be implemented so the stream of information is processed seamlessly through the model and it can make work efficiently. Finally there must be a basic GUI design to display the results of the model.
 
+Block Diagram
+
+![Block Diagram](images/Classification%20Model.jpg)
+
 Data Collection Strategy:
 General:
 - Data will be recorded using a preinstalled laptop camera to guarantee standard conditions
@@ -57,3 +61,8 @@ Tools and Resources:
 - Label Studio for anotations on the recordings.
 - MediaPipe to capture and measure specific joint movements.
 - Github as the online repository for version control and collabotarion.
+
+[1] C. Lugaresi *et al.*, "MediaPipe: A Framework for Building Perception Pipelines," *arXiv preprint arXiv:1906.08172*, 2019. [Online]. Available: [https://arxiv.org/abs/1906.08172](https://arxiv.org/abs/1906.08172)
+
+[2] I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning. Cambridge, MA, USA: MIT Press, 2016.
+
