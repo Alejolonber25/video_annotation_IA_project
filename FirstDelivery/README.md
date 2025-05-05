@@ -1,68 +1,68 @@
-Project title: Real-Time Human Activity Recognition
+# Project Title: Real-Time Human Activity Recognition
 
-Group Members:
-- Alejando Londoño
+## Group Members:
+- Alejandro Londoño
 - Juan Diego Lora
 - Simón García
 
-Research Questions:
+## Research Questions:
 - How can a basic machine learning model classify human activities in real time using joint position data?
 - What are the best models for this real-time classification process?
 - How would different individuals and perspectives affect the estimation process?
 - What is the highest possible accuracy achievable with the selected model?
 - How can we improve generalization when taking into account speed, body type, clothing and others?
 
-Problem type: Supervised Classification
+## Problem type: Supervised Classification
 
-Methodology:¨Crisp-DM Adaptation
-- Business understanding: For this proyect it involves understanding the task iteself. This project is looking to make a model that allows to identify movements and some specific positions that a person is doing. This involves feeding the model a continous stream of information using a camera. The model should gain information from previous recordings on which it will learn to classify this actions based on the angle of joints and the relative distance between them.
-- Data understanding: The data will include a lot of information that comes as the raw data that is gathered by the camera. The information comes as a stream of numbers that display the pixel-like information associated to the images in every capture. 
-- Data preparation: The data must be prepared in a way so the model is not only able to process the data correctly (so the answer makes sense) but also that the results can be calculated efficiently. The data will be transformed into an gray scale and then everything will be transformed through PCA to reduce the dimentionality of the dataset which allow less but more meaningful information to be processed (reducing the amount of pixels). The data will also be normalized to reduce any problems with scales and the effects of outliers.
-- Modeling: For the model an XGBoost/RandomForest/etc will be used to process the live data and then make the appropiate predictions. For this situation a robust ensamble models would be more realiable to reduce variance and bias. The model's hyperparameters will be tuned using Grid Search to find the optimal values from a set of preestablish ones. 
-- Evaluation stategy: For this project we are planning to use accuracy, recall and F1-score to measure the performance of the model. There will be tests not only for general stream of information, but we will also check if some activities and body positions are easier to detect than others.
-- Next Steps: We must collect the data in an orderly manner, making sure to control as much the conditions in which the data is gathered (striving for homogeneity). We must train and thest the models and adjust them so the predictions are accurate. A pipeline must be implemented so the stream of information is processed seamlessly through the model and it can make work efficiently. Finally there must be a basic GUI design to display the results of the model.
+## Methodology: CRISP-DM Adaptation
+- **Business Understanding**: This project aims to build a model that identifies movements and specific positions a person is performing. The model will process a continuous stream of data using a camera. The model will learn to classify actions based on joint angles and relative distances between them.
+- **Data Understanding**: The data will come from a continuous stream of images captured by the camera, which will be transformed into numerical data corresponding to pixel-like information for each capture.
+- **Data Preparation**: The raw data will be converted into grayscale, then transformed using PCA (Principal Component Analysis) to reduce dimensionality. This will allow the model to process meaningful data with fewer features. Additionally, the data will be normalized to reduce the impact of scale differences and outliers.
+- **Modeling**: We will use machine learning models such as XGBoost and RandomForest, and employ ensemble methods to ensure reliability and reduce variance and bias. Hyperparameter tuning will be done using Grid Search to find the optimal settings.
+- **Evaluation Strategy**: The performance of the model will be measured using accuracy, recall, and F1-score. We will also test if certain actions and positions are easier to detect than others.
+- **Next Steps**: The data needs to be collected in a controlled manner, with attention to homogeneity. Afterward, models will be trained and tested, fine-tuned for accurate predictions, and a pipeline will be built to process the real-time data stream. Finally, a simple GUI will be designed to display the model's results.
 
-Block Diagram
+## Block Diagram
 
 ![Block Diagram](images/Classification%20Model.jpg)
 
-Data Collection Strategy:
-General:
-- Data will be recorded using a preinstalled laptop camera to guarantee standard conditions
-- The computer must be placed over a table, with the screen on a 90° angle pointing towards an open area where the actions are going to take place.
-- The recordings will be of different length and categorized by the type of actions.
+## Data Collection Strategy:
+### General:
+- Data will be recorded using a preinstalled laptop camera to guarantee standard conditions.
+- The computer must be placed over a table, with the screen at a 90° angle pointing toward an open area for the actions to take place.
+- Recordings will vary in length and will be categorized by action type.
 
-Considerations:
-- There can only be one person on the camera's point of view at any given time.
-- The lighting should try to be homogenous throughout the data gathering and when running the model itself.
-- Background should vary, to allow the model to learn different scenarios.
-- Record multiple people with different types of clothing to add variability
-- There should be a plain background, wall or static background so the noice is reduced during the data collection and the preditions to be more accurate.
+### Considerations:
+- Only one person should be visible in the camera's frame at a time.
+- Lighting conditions should be homogeneous throughout the data collection.
+- The background should vary to allow the model to adapt to different scenarios.
+- Multiple people with varying types of clothing should be recorded to increase variability.
+- A plain background (e.g., wall or static background) should be used to reduce noise and improve prediction accuracy.
 
-Anotation Strategy:
-- Semimanual annotation will be done using LabelStudio
-- Follow keymovements using mediapipe or OpenPose.
+## Annotation Strategy:
+- Semi-manual annotation will be performed using LabelStudio.
+- Key movements will be tracked using MediaPipe or OpenPose.
 
-Exploratory Data Analysis:
-- The exploratory analysis of the data will be done in order to determine the general quality of the data and how how the pipeline must be implemented in order to work with the data. For this process the appropiate visualizations like histograms and boxplot diagrams will be useful. Additionaly, checking the data for outliers and missing data must be done in order to determine the quality of the recorded videos.
+## Exploratory Data Analysis:
+- Exploratory analysis will be performed to assess data quality and determine how the pipeline should be structured. Visualizations like histograms and boxplots will be used to identify outliers and missing data.
 
-Performance Metrics:
-- Accuracy: To measure the overall correctness of the model.
-- Recall: Measure the completeness of every action and posture classification.
-- F1-score: To include the balance between precision and recall to also measure the correctness of the model.
+## Performance Metrics:
+- **Accuracy**: Measures the overall correctness of the model.
+- **Recall**: Measures the completeness of each action and posture classification.
+- **F1-score**: Balances precision and recall to evaluate the model's correctness.
 
-Ethical Considerations:
-- Privacy: Ensure the collected videous of people are only used for education purposes and the extents explored within this project.
-- Consent: All participants must be informed before recording the videos and know they will be used on a project.
-- Fairness: Generalization must be ensured by using a diverse group of individuals.
+## Ethical Considerations:
+- **Privacy**: Ensure that collected videos are only used for educational purposes within the scope of the project.
+- **Consent**: All participants must be informed and consent to having their videos recorded and used for the project.
+- **Fairness**: A diverse group of participants will be used to ensure generalization and fairness in the model.
 
-Tools and Resources:
-- Python, Numpy, Pandas, sckit-learn and Matplotlib: Used to handle all the data, models, visutalizations and measuring metrics.
-- Label Studio for anotations on the recordings.
-- MediaPipe to capture and measure specific joint movements.
-- Github as the online repository for version control and collabotarion.
+## Tools and Resources:
+- **Python**, **NumPy**, **Pandas**, **scikit-learn**, **Matplotlib**: Used for data handling, model building, visualizations, and metric evaluations.
+- **Label Studio**: For annotating video recordings.
+- **MediaPipe**: To capture and analyze specific joint movements.
+- **GitHub**: For version control and collaboration.
 
+## References:
 [1] C. Lugaresi *et al.*, "MediaPipe: A Framework for Building Perception Pipelines," *arXiv preprint arXiv:1906.08172*, 2019. [Online]. Available: [https://arxiv.org/abs/1906.08172](https://arxiv.org/abs/1906.08172)
 
-[2] I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning. Cambridge, MA, USA: MIT Press, 2016.
-
+[2] I. Goodfellow, Y. Bengio, and A. Courville, *Deep Learning*. Cambridge, MA, USA: MIT Press, 2016.
