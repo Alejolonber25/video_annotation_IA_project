@@ -30,3 +30,6 @@ pip-wheel-metadata/
 
 # Ignore other common files
 *.log
+
+/dataset/
+/videos/
