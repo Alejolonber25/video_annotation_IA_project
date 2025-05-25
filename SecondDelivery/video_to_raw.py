@@ -12,30 +12,28 @@ pose = mp_pose.Pose(static_image_mode=False,
                     enable_segmentation=False,
                     min_detection_confidence=0.5)
 
-video_root = './videos'
-dataset_root = './dataset'
+video_root = './SecondDelivery/videos'
+raw_dataset_root = './SecondDelivery/raw_datasets'
 
-# Crear carpeta destino si no existe
-os.makedirs(dataset_root, exist_ok=True)
+# Create the directory if it doesn't exist
+os.makedirs(raw_dataset_root, exist_ok=True)
 
-# Archivo CSV general
-csv_path = os.path.join(dataset_root, "landmarks_dataset.csv")
 
-# Lista para guardar todos los landmarks
-all_landmarks = []
-
-# Obtener todas las carpetas (labels)
+# Get the names of all the directories in the video root --> Class names
 label_folders = glob(os.path.join(video_root, '*'))
 
 for label_folder in label_folders:
     label = os.path.basename(label_folder)
-    print(f"Processing label: {label}")
+    print(f"\n***Processing label: {label}***")
+
+    #Array to store the landmarks per class
+    class_landmarks = []
 
     video_files = glob(os.path.join(label_folder, '*'))
 
     for video_path in video_files:
         video_name = os.path.splitext(os.path.basename(video_path))[0]
-        print(f"Extracting frames from: {video_name}")
+        print(f"***Extracting frames from: {video_name}***")
 
         cap = cv2.VideoCapture(video_path)
 
@@ -51,29 +49,29 @@ for label_folder in label_folders:
                 landmarks = []
                 for lm in results.pose_landmarks.landmark:
                     landmarks.extend([lm.x, lm.y, lm.z, lm.visibility])
-                landmarks.append(label)  # Agregar la etiqueta al final
-                all_landmarks.append(landmarks)
+                class_landmarks.append(landmarks)
 
         cap.release()
 
 pose.close()
 
-# Guardar todos los landmarks en un solo CSV
-if all_landmarks:
+#Save one CSV file with all landmarks per class
+if class_landmarks:
+    csv_path = os.path.join(raw_dataset_root, f"{label}.csv")
     with open(csv_path, 'w', newline='') as f:
         writer = csv.writer(f)
 
-        # Crear encabezado
+        #CSV header for the landmarks
         header = []
         for i in range(33):
             header += [f"x{i}", f"y{i}", f"z{i}", f"v{i}"]
         header.append("label")
 
         writer.writerow(header)
-        writer.writerows(all_landmarks)
+        writer.writerows(class_landmarks)
 
-    print(f"Saved all landmark data to {csv_path}")
+    print(f"✅ Saved {len(class_landmarks)} samples to {csv_path}")
 else:
-    print("No landmarks found in any video.")
+    print(f"⚠️ No landmarks found for label: {label}")
 
-print("✅ Landmark CSV dataset created successfully.")
+print("\n🎉 All label raw datasets created successfully.")
