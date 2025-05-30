@@ -53,25 +53,24 @@ for label_folder in label_folders:
 
         cap.release()
 
+    #Save one CSV file with all landmarks per class
+    if class_landmarks:
+        csv_path = os.path.join(raw_dataset_root, f"{label}.csv")
+        with open(csv_path, 'w', newline='') as f:
+            writer = csv.writer(f)
+
+            #CSV header for the landmarks
+            header = []
+            for i in range(33):
+                header += [f"x{i}", f"y{i}", f"z{i}", f"v{i}"]
+            header.append("label")
+
+            writer.writerow(header)
+            writer.writerows(class_landmarks)
+
+        print(f"✅ Saved {len(class_landmarks)} samples to {csv_path}")
+    else:
+        print(f"⚠️ No landmarks found for label: {label}")
+
 pose.close()
-
-#Save one CSV file with all landmarks per class
-if class_landmarks:
-    csv_path = os.path.join(raw_dataset_root, f"{label}.csv")
-    with open(csv_path, 'w', newline='') as f:
-        writer = csv.writer(f)
-
-        #CSV header for the landmarks
-        header = []
-        for i in range(33):
-            header += [f"x{i}", f"y{i}", f"z{i}", f"v{i}"]
-        header.append("label")
-
-        writer.writerow(header)
-        writer.writerows(class_landmarks)
-
-    print(f"✅ Saved {len(class_landmarks)} samples to {csv_path}")
-else:
-    print(f"⚠️ No landmarks found for label: {label}")
-
 print("\n🎉 All label raw datasets created successfully.")
