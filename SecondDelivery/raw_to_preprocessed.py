@@ -8,17 +8,33 @@ output_csv = './SecondDelivery/preprocessed_dataset.csv'
 N = int(input("Enter the number of frames to group by: "))  # Number of frames per window
 
 def normalize_landmarks(landmarks):
-    # landmarks: lista de 132 valores [x0, y0, z0, v0, ..., x32, y32, z32, v32]
+    """
+    Normaliza landmarks centrando en el centro de cadera y escalando por altura del cuerpo.
+    """
     coords = np.array(landmarks).reshape((33, 4))
     
-    # Centro el cuerpo: usar el punto de la cadera (ej. landmark 23 o 24 o promedio)
-    center = (coords[23][:3] + coords[24][:3]) / 2  # solo x,y,z
-    coords[:, :3] -= center  # centrar
+    # --- CENTRADO ---
+    # Centro del cuerpo: promedio de las caderas (landmark 23 y 24)
+    center = (coords[23][:3] + coords[24][:3]) / 2
+    coords[:, :3] -= center
 
-    # Escalar por distancia entre hombros (landmark 11 y 12)
-    shoulder_dist = np.linalg.norm(coords[11][:3] - coords[12][:3])
-    if shoulder_dist > 0:
-        coords[:, :3] /= shoulder_dist  # escalar
+    # --- ESCALADO ---
+    # Calcular "altura virtual" del cuerpo como distancia entre tobillos (27,28) y cabeza (0)
+    # También puede usarse nariz (0) a tobillo (27 y 28) como proxy
+    left_ankle = coords[27][:3]
+    right_ankle = coords[28][:3]
+    ankle_center = (left_ankle + right_ankle) / 2
+
+    head = coords[0][:3]
+    body_height = np.linalg.norm(head - ankle_center)
+
+    # Backup: si por algún motivo da cero (ej. no se detectan tobillos), usar hombros
+    if body_height == 0:
+        shoulder_dist = np.linalg.norm(coords[11][:3] - coords[12][:3])
+        body_height = shoulder_dist if shoulder_dist > 0 else 1.0
+
+    coords[:, :3] /= body_height
+
     return coords.flatten()
 
 #Function to make the average of differences between an N number of frames
