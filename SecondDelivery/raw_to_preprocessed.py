@@ -7,6 +7,20 @@ raw_data_folder = './SecondDelivery/raw_datasets'
 output_csv = './SecondDelivery/preprocessed_dataset.csv'
 N = int(input("Enter the number of frames to group by: "))  # Number of frames per window
 
+def normalize_landmarks(landmarks):
+    # landmarks: lista de 132 valores [x0, y0, z0, v0, ..., x32, y32, z32, v32]
+    coords = np.array(landmarks).reshape((33, 4))
+    
+    # Centro el cuerpo: usar el punto de la cadera (ej. landmark 23 o 24 o promedio)
+    center = (coords[23][:3] + coords[24][:3]) / 2  # solo x,y,z
+    coords[:, :3] -= center  # centrar
+
+    # Escalar por distancia entre hombros (landmark 11 y 12)
+    shoulder_dist = np.linalg.norm(coords[11][:3] - coords[12][:3])
+    if shoulder_dist > 0:
+        coords[:, :3] /= shoulder_dist  # escalar
+    return coords.flatten()
+
 #Function to make the average of differences between an N number of frames
 def compute_average_differences(landmark_array, window):
     samples = []
@@ -35,7 +49,7 @@ for csv_path in csv_files:
         header = next(reader)  # skip header
 
         # Read all rows as floats
-        data = [list(map(float, row)) for row in reader]
+        data = [normalize_landmarks(list(map(float, row))) for row in reader]
 
     if len(data) < N:
         print(f"⚠️ Not enough frames in {label} to process window of N={N}")

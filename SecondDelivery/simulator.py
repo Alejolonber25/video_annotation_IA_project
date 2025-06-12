@@ -4,35 +4,54 @@ import mediapipe as mp
 import joblib
 from collections import deque
 
+# Cargar pose detector
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=False,
                     model_complexity=2,
                     enable_segmentation=False,
                     min_detection_confidence=0.5)
 
-model = joblib.load('./SecondDelivery/best_pose_classifier_model.pkl')
+# Cargar modelo y transformadores
+model = joblib.load('./SecondDelivery/pose_classifier_model.pkl')
+scaler = joblib.load('./SecondDelivery/scaler.pkl')
+pca = joblib.load('./SecondDelivery/pca.pkl')
 
-N = 5
+# Buffer de frames
+N = 2
 frame_buffer = deque(maxlen=N)
 
+# Cámara
 cap = cv2.VideoCapture(0)
 
 def extract_landmarks(results):
-    """Extrae landmarks planos [x1, y1, z1, v1, ..., x33, y33, z33, v33]"""
     landmarks = []
     if results.pose_landmarks:
         for lm in results.pose_landmarks.landmark:
             landmarks.extend([lm.x, lm.y, lm.z, lm.visibility])
-    return landmarks if len(landmarks) == 132 else None  # 33 * 4 = 132
+    return landmarks if len(landmarks) == 132 else None
 
 def compute_avg_diff(window):
-    """Calcula la media de diferencias entre frames consecutivos"""
     diffs = []
     for i in range(len(window) - 1):
         diff = np.array(window[i + 1]) - np.array(window[i])
         diffs.append(diff)
     return np.mean(diffs, axis=0)
 
+def normalize_landmarks(landmarks):
+    # landmarks: lista de 132 valores [x0, y0, z0, v0, ..., x32, y32, z32, v32]
+    coords = np.array(landmarks).reshape((33, 4))
+    
+    # Centro el cuerpo: usar el punto de la cadera (ej. landmark 23 o 24 o promedio)
+    center = (coords[23][:3] + coords[24][:3]) / 2  # solo x,y,z
+    coords[:, :3] -= center  # centrar
+
+    # Escalar por distancia entre hombros (landmark 11 y 12)
+    shoulder_dist = np.linalg.norm(coords[11][:3] - coords[12][:3])
+    if shoulder_dist > 0:
+        coords[:, :3] /= shoulder_dist  # escalar
+    return coords.flatten()
+
+# Loop principal
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -43,12 +62,15 @@ while True:
 
     lm = extract_landmarks(results)
     if lm:
+        lm = normalize_landmarks(lm)
         frame_buffer.append(lm)
 
     label = "Detecting..."
     if len(frame_buffer) == N:
         avg_diff = compute_avg_diff(list(frame_buffer))
-        prediction = model.predict([avg_diff])
+        x_scaled = scaler.transform([avg_diff])  # Aplicar scaler
+        x_pca = pca.transform(x_scaled)          # Aplicar PCA
+        prediction = model.predict(x_pca)
         label = prediction[0]
 
     cv2.putText(frame, f"Prediction: {label}", (30, 60),
