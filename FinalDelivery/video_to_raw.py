@@ -5,15 +5,15 @@ import cv2
 import mediapipe as mp
 import csv
 
-# Configurar MediaPipe
+# Configure MediaPipe pose detection
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=False,
                     model_complexity=2,
                     enable_segmentation=False,
                     min_detection_confidence=0.5)
 
-video_root = './SecondDelivery/videos'
-raw_dataset_root = './SecondDelivery/raw_datasets'
+video_root = './FinalDelivery/videos'
+raw_dataset_root = './FinalDelivery/raw_datasets'
 
 # Create the directory if it doesn't exist
 os.makedirs(raw_dataset_root, exist_ok=True)
@@ -22,6 +22,8 @@ os.makedirs(raw_dataset_root, exist_ok=True)
 # Get the names of all the directories in the video root --> Class names
 label_folders = glob(os.path.join(video_root, '*'))
 
+#For every label folder, extract the landmarks from all the videos
+# And save them in a CSV file with the label as the name
 for label_folder in label_folders:
     label = os.path.basename(label_folder)
     print(f"\n***Processing label: {label}***")
@@ -29,8 +31,12 @@ for label_folder in label_folders:
     #Array to store the landmarks per class
     class_landmarks = []
 
+    #Get all the video files in the label folder
     video_files = glob(os.path.join(label_folder, '*'))
 
+    #If no video files are found, skip to the next label
+    #For every video file, divide the frames with CV2
+    #Then, extract the landmarks with MediaPipe
     for video_path in video_files:
         video_name = os.path.splitext(os.path.basename(video_path))[0]
         print(f"***Extracting frames from: {video_name}***")
@@ -68,9 +74,9 @@ for label_folder in label_folders:
             writer.writerow(header)
             writer.writerows(class_landmarks)
 
-        print(f"✅ Saved {len(class_landmarks)} samples to {csv_path}")
+        print(f"Saved {len(class_landmarks)} samples to {csv_path}")
     else:
-        print(f"⚠️ No landmarks found for label: {label}")
+        print(f"No landmarks found for label: {label}")
 
 pose.close()
-print("\n🎉 All label raw datasets created successfully.")
+print("\nAll label raw datasets created successfully.")
