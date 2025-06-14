@@ -1,5 +1,13 @@
 # Requirements
 
+By:     
+- Alejandro Londoño   
+- Simon García    
+- Juan Diego Lora    
+
+Link youtube video. Project demonstration:
+https://youtu.be/v8zdybVxdFQ
+
 * Python 3.11.0 (required for MediaPipe compatibility)
 * pip package manager
 
